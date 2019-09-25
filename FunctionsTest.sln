@@ -26,6 +26,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsTest.Domain", "src\Domain\FunctionsTest.Domain\FunctionsTest.Domain.csproj", "{FAAFC1AF-3200-43D8-9344-C83E6218D9C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postman", "postman", "{A82A8DC1-594F-4956-805C-80263D9165F1}"
+	ProjectSection(SolutionItems) = preProject
+		postman.md = postman.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
