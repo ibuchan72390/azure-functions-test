@@ -5,10 +5,54 @@ services:
     image: mcr.microsoft.com/azure-storage/azurite:latest
     entrypoint: azurite -l /workspace -d /workspace/debug.log --blobHost 0.0.0.0 --queueHost 0.0.0.0
     volumes:
-      - c:/azurite:/workspace
+      - d:/azure/azurite:/workspace
     expose:
       - 10000
       - 10001
     ports:
       - "10000:10000"
       - "10001:10001"
+    
+  mongo:
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=P4ssword!
+
+# I wanted this to work, but it only works with windows containers
+# You need to use this download link instead to download a local windows emulator....
+# https://aka.ms/cosmosdb-emulator
+#  cosmos:
+#    image: mcr.microsoft.com/cosmosdb/windows/azure-cosmos-emulator
+#    expose:
+#      - 8081
+#      - 8900
+#      - 8901
+#      - 8902
+#      - 10250
+#      - 10251
+#      - 10252
+#      - 10253
+#      - 10254
+#      - 10255
+#      - 10256
+#      - 10350
+#    ports:
+#      - "8081:8081" 
+#      - "8900:8900" 
+#      - "8901:8901" 
+#      - "8902:8902" 
+#      - "10250:10250" 
+#      - "10251:10251" 
+#      - "10252:10252" 
+#      - "10253:10253" 
+#      - "10254:10254" 
+#      - "10255:10255" 
+#      - "10256:10256" 
+#      - "10350:10350"
+#    volumes:
+#      - d:/azure/cosmos:c:\CosmosDBEmulator\CosmosDBEmulatorCert

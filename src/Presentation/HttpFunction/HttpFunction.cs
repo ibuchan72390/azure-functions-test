@@ -1,108 +1,123 @@
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using FunctionsTest.Infrastructure.Extensions;
+using FunctionsTest.Domain.Models.Application;
+using FunctionsTest.Domain.Helpers;
 using Newtonsoft.Json;
-using Microsoft.Azure.Storage.Queue;
-using Microsoft.Azure.Storage;
-using System.Linq;
-using FunctionsTest.Domain.Extensions;
-using FunctionsTest.Domain.Models.Constants;
 
-namespace HttpFunction
+namespace PersonController
 {
-    public static class HttpFunction
+    public static class PersonControllerCreate
     {
-        [FunctionName("HttpFunction")]
+        [FunctionName("Presentation-Person-Create")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var body = await req.ReadAsStringAsync();
+            var request = JsonConvert.DeserializeObject<CreatePersonCommand>(body);
 
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            try
+            /*
+             * We need a better integrated way of handling validation,
+             * this would need to be bubbled down to application or managed through 
+             * like an ISelfValidate interface on all the application commands
+             * then we could offload the model validation to the generated object from
+             * the request and test it with simple unit tests.
+             */
+            if (request.Name == null)
             {
-                string webJobStorage = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-
-                // Setup our StorageAccount
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(webJobStorage);
-
-                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-
-                // Retrieve a reference to the required containers
-                // This should happen somewhere else...perhaps an initialization utility of some form?
-                // Perhaps that utility could provide the CloudStorageClient in return as well
-                CloudQueue inputQueue = queueClient.GetQueueReference(
-                    QueueConstants.Application.SaveQueueMessage.InputQueue
-                );
-                await inputQueue.CreateIfNotExistsAsync();
-
-                CloudQueue outputQueue = queueClient.GetQueueReference(
-                    QueueConstants.Application.SaveQueueMessage.OutputQueue    
-                );
-                await outputQueue.CreateIfNotExistsAsync();
-
-
-
-                /*
-                 * This entire piece can be replicated...
-                 * Useful variables to extract...
-                 *  - Message Count
-                 */
-                #region Polling Process (Could we somehow use the Polly process here?)
-
-                CloudQueueMessage inputMessage = new CloudQueueMessage(name.ToQueueMessage(context.InvocationId), false);
-                await inputQueue.AddMessageAsync(inputMessage);
-
-                string stringId = context.InvocationId.ToString();
-                CloudQueueMessage result = null;
-
-                while (result == null || result.AsString.GetQueueMessageId() != stringId)
-                {
-                    /*
-                     * This is not sufficient simply because if we get one message stuck at the top of the queue without a recipient, the entire chain fails.
-                     * We need a way of moving beyond the top item on the queue and checking the other results.
-                     */
-                    var msgs = await outputQueue.PeekMessagesAsync(10);
-                    var msgDictionary = msgs.ToDictionary(x => x.AsString.GetQueueMessageId(), x => x);
-
-                    if (msgDictionary.ContainsKey(stringId))
-                    {
-                        var results = await outputQueue.GetMessagesAsync(10);
-                        result = results.ToDictionary(x => x.AsString.GetQueueMessageId(), x => x)[stringId];
-                    }
-                }
-
-                await outputQueue.DeleteMessageAsync(result);
-
-                #endregion
-
-                return name != null
-                    ? (ActionResult)new OkObjectResult(result.AsString)
-                    : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+                return new BadRequestObjectResult("Please pass a name on the query string");
             }
-            catch (Exception e)
-            {
-                log.LogError(e.Message);
-                throw;
-            }
+
+            var result = await ClientGenerator.
+                GenerateQueueClient().
+                GetApplicationQueueClient().
+                CreatePerson(request);
+
+            return new OkObjectResult(result.Id);
         }
+    }
 
-        //private static string GetCloudQueueMessageId(CloudQueueMessage msg)
-        //{
-        //    return msg.AsString.Split(delimiter)[0];
-        //}
+    public static class PersonControllerGet
+    { 
+        [FunctionName("Presentation-Person-Get")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            ILogger log,
+            ExecutionContext context)
+        {
+            var query = new GetPersonQuery
+            {
+                PersonKey = req.Query["id"]
+            };
+
+            var result = await ClientGenerator.
+                GenerateQueueClient().
+                GetApplicationQueueClient().
+                GetPerson(query);
+
+            return new OkObjectResult(result);
+        }
+    }
+
+    public static class PersonControllerGetAll
+    {
+        [FunctionName("Presentation-Person-GetAll")]
+        public static async Task<IActionResult> Run(
+                [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+                ILogger log,
+                ExecutionContext context)
+        {
+            var result = await ClientGenerator.
+                GenerateQueueClient().
+                GetApplicationQueueClient().
+                GetPeople();
+
+            return new OkObjectResult(result);
+        }
+    }
+
+    public static class PersonControllerDelete
+    {
+        [FunctionName("Presentation-Person-Delete")]
+        public static async Task<IActionResult> Run(
+                [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+                ILogger log,
+                ExecutionContext context)
+        {
+            var command = JsonConvert.DeserializeObject<DeletePersonCommand>(await req.ReadAsStringAsync());
+
+            await ClientGenerator.
+                GenerateQueueClient().
+                GetApplicationQueueClient().
+                DeletePerson(command);
+
+            return new EmptyResult();
+        }
+    }
+
+    public static class PersonControllerUpdate
+    {
+        [FunctionName("Presentation-Person-Update")]
+        public static async Task<IActionResult> Run(
+                [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+                ILogger log,
+                ExecutionContext context)
+        {
+            var model = JsonConvert.DeserializeObject<UpdatePersonCommand>(await req.ReadAsStringAsync());
+
+            var result = await ClientGenerator.
+                GenerateQueueClient().
+                GetApplicationQueueClient().
+                UpdatePerson(model);
+
+            return new OkObjectResult(result);
+        }
     }
 }
 
