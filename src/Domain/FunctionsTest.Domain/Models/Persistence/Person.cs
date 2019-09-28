@@ -10,6 +10,7 @@ namespace FunctionsTest.Domain.Models.Persistence
     {
         #region Attributes
 
+        [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 

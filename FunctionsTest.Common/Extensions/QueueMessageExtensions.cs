@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace FunctionsTest.Domain.Extensions
+namespace FunctionsTest.Common.Extensions
 {
-    /*
-     * This piece is reusable for any usage of the Queue Technology
-     */
     public static class QueueMessageExtensions
     {
         public const char Delimiter = '|';
@@ -41,11 +38,7 @@ namespace FunctionsTest.Domain.Extensions
         public static string GetQueueMessage(this string message)
         {
             var parts = GetQueueParts(message);
-
-            if (parts.Length == 2) {
-                return parts[1];
-            }
-            return parts[0];
+            return parts[1];
         }
 
         public static T GetQueueMessage<T>(this string message)

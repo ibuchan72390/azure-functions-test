@@ -1,7 +1,7 @@
 ﻿using FunctionsTest.Domain.Helpers;
 using FunctionsTest.Domain.Models.Constants;
 using FunctionsTest.Domain.Models.Persistence;
-using FunctionsTest.Infrastructure.Extensions;
+using FunctionsTest.Domain.Extensions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -116,7 +116,7 @@ namespace PersonService
         {
             var personCollection = ClientGenerator.GetMongoCollection<Person>();
 
-            var personKey = myQueueItem.GetQueueMessage();
+            var personKey = myQueueItem.GetQueueMessage<string>();
 
             personCollection.DeleteOne(x => x.Id == personKey);
         }

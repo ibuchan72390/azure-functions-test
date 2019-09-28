@@ -12,8 +12,6 @@ namespace FunctionsTest.Domain.Extensions
     
     public static class QueueClientExtensions
     {
-        #region Core Reusable Functionality
-
         /*
          * The core functionality that makes all of this work...
          * We'll create specific extensions for each of the Request / Response implementations.
@@ -132,8 +130,6 @@ namespace FunctionsTest.Domain.Extensions
 
             return JsonConvert.DeserializeObject<TResponse>(result.AsString.GetQueueMessage());
         }
-
-        #endregion
 
         public static ApplicationQueueClient GetApplicationQueueClient(
             this CloudQueueClient client)

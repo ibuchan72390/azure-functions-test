@@ -23,6 +23,45 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=P4ssword!
 
+
+# 
+# This KIND OF works? Like, the functions load, but I can't seem to get them to fire.  Not sure wtf is going on.
+#
+#  application:
+#    image: functionstest-application
+#    build:
+#      context: ./src
+#      dockerfile: ./Application/FunctionsTest.Application/dockerfile
+#    ports:
+#      - "7072:80"
+#    environment:
+#      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+#      - FUNCTIONS_WORKER_RUNTIME=dotnet
+#
+#  persistence:
+#    image: functionstest-persistence
+#    build:
+#      context: ./src
+#      dockerfile: ./Persistence/FunctionsTest.Persistence/dockerfile
+#    ports:
+#      - "7073:80"
+#    environment:
+#      - MongoDatabaseName=FunctionsTest
+#      - MongoConnectionString=mongodb://root:P4ssword!@mongo:27017
+#      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+#      - FUNCTIONS_WORKER_RUNTIME=dotnet
+#
+#  presentation:
+#    image: functionstest-presentation
+#    build:
+#      context: ./src
+#      dockerfile: ./Presentation/FunctionsTest.Presentation/dockerfile
+#    ports:
+#      - "7071:80"
+#    environment:
+#      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+#      - FUNCTIONS_WORKER_RUNTIME=dotnet
+
 # I wanted this to work, but it only works with windows containers
 # You need to use this download link instead to download a local windows emulator....
 # https://aka.ms/cosmosdb-emulator

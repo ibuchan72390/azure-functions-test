@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using FunctionsTest.Infrastructure.Extensions;
+using FunctionsTest.Domain.Extensions;
 using FunctionsTest.Domain.Models.Application;
 using FunctionsTest.Domain.Helpers;
 using Newtonsoft.Json;
