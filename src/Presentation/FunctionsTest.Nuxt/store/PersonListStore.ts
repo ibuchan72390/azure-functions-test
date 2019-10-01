@@ -1,7 +1,8 @@
-import { IPersonListState } from '~/models/IPersonListState'
 import { GetterTree, ActionTree, ActionContext, MutationTree } from 'vuex'
+import { IPersonListState } from '~/models/IPersonListState'
 import { IPerson } from '~/models/IPerson'
 import { PersonListStoreKeys } from '~/models/PersonListStoreKeys'
+import { ApiSourceStoreKeys } from '~/models'
 
 export const state = (): IPersonListState => {
   return {
@@ -28,12 +29,22 @@ export const actions: ActionTree<IPersonListState, {}> = {
   async [PersonListStoreKeys.actions.initialize](
     context: ActionContext<IPersonListState, {}>
   ): Promise<void> {
+    // configure the loading state
+    context.commit(PersonListStoreKeys.mutations.setPeople, null)
+
+    const url =
+      context.rootGetters[
+        ApiSourceStoreKeys.namespace +
+          '/' +
+          ApiSourceStoreKeys.getters.getApiLink
+      ]
+
     const reqInfo: RequestInfo =
-      'http://localhost:7071/api/Presentation-Person-GetAll'
+      'http://' + url + '/api/Presentation-Person-GetAll'
 
     const fetchResult = await fetch(reqInfo)
 
-    const people: IPerson = await fetchResult.json()
+    const people: IPerson = ((await fetchResult.json()) as any).people
 
     context.commit(PersonListStoreKeys.mutations.setPeople, people)
   }

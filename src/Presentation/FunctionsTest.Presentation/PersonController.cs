@@ -11,11 +11,23 @@ using Newtonsoft.Json;
 
 namespace PersonController
 {
+    public static class TestController
+    {
+        [FunctionName("test")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            ILogger log,
+            ExecutionContext context)
+        {
+            return new OkObjectResult("test");
+        }
+    }
+
     public static class PersonControllerCreate
     {
         [FunctionName("Presentation-Person-Create")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
         {
@@ -47,7 +59,7 @@ namespace PersonController
     { 
         [FunctionName("Presentation-Person-Get")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
         {
@@ -69,7 +81,7 @@ namespace PersonController
     {
         [FunctionName("Presentation-Person-GetAll")]
         public static async Task<IActionResult> Run(
-                [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+                [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
                 ILogger log,
                 ExecutionContext context)
         {
@@ -86,7 +98,7 @@ namespace PersonController
     {
         [FunctionName("Presentation-Person-Delete")]
         public static async Task<IActionResult> Run(
-                [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+                [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
                 ILogger log,
                 ExecutionContext context)
         {
@@ -105,7 +117,7 @@ namespace PersonController
     {
         [FunctionName("Presentation-Person-Update")]
         public static async Task<IActionResult> Run(
-                [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+                [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
                 ILogger log,
                 ExecutionContext context)
         {

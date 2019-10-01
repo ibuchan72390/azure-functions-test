@@ -1,33 +1,15 @@
 <template>
   <div class="container">
-    <div>
-      <h1 class="title">FunctionsTest.Nuxt</h1>
-      <h2
-        class="subtitle"
-      >UI to demonstrate the efficiency of the Azure Functions I&#39;ve developed and demonstrate various concepts in a clear and easy to use manner</h2>
-    </div>
-
-    <div v-for="person of people" :key="person.id">{{ person.key }} - {{ person.name }}</div>
+    <person-list></person-list>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, namespace } from 'nuxt-property-decorator'
-
-import { PersonListStoreKeys } from '@/models/PersonListStoreKeys'
-import { IPerson } from '@/models/IPerson'
-
-const personListStore = namespace(PersonListStoreKeys.namespace)
+import { Component } from 'nuxt-property-decorator'
 
 @Component
-export default class PersonList extends Vue {
-  @personListStore.Getter(PersonListStoreKeys.getters.isLoading)
-  public isLoading: boolean
-
-  @personListStore.State(PersonListStoreKeys.state.people)
-  public people: IPerson
-}
+export default class HomePage extends Vue {}
 </script>
 
 <style>

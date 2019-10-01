@@ -1,5 +1,6 @@
 <template>
   <div>
+    <api-source-dropdown></api-source-dropdown>
     <nuxt />
   </div>
 </template>
