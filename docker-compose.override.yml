@@ -19,6 +19,14 @@ services:
       - 27017
     ports:
       - "27017:27017"
+
+  mongo-seed:
+    build:
+      context: .
+      dockerfile: ./docker/seed.dockerfile
+    image: test-seed
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=P4ssword!
+      - MONGODB_HOST=mongo
+      - MONGODB_PORT=27017
+    depends_on:
+      - mongo

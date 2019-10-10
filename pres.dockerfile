@@ -1,1 +1,0 @@
-FROM azure-functions/dotnet:2.0
