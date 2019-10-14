@@ -17,6 +17,7 @@ export default class ApiSourceDropdown extends Vue {
   public get source() {
     return this.activeSource
   }
+
   public set source(source: IApiSource) {
     this.setSource(source)
   }

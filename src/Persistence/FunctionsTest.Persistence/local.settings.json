@@ -2,7 +2,7 @@
     "IsEncrypted": false,
   "Values": {
     "MongoDatabaseName": "FunctionsTest",
-    "MongoConnectionString": "mongodb://root:P4ssword!@192.168.99.100:27017",
+    "MongoConnectionString": "mongodb://192.168.99.100:27017",
     "AzureWebJobsStorage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://192.168.99.100:10000/devstoreaccount1;QueueEndpoint=http://192.168.99.100:10001/devstoreaccount1;",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }

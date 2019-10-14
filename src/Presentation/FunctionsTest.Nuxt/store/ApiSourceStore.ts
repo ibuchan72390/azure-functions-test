@@ -2,6 +2,8 @@ import { GetterTree, MutationTree } from 'vuex/types/index'
 import { IApiSource, IApiSourceState } from '~/models/IApiSourceState'
 import { ApiSourceStoreKeys } from '~/models/ApiSourceStoreKeys'
 
+const sourceKey = 'last-set-source'
+
 function linkGen(): IApiSource[] {
   return [
     { name: 'Visual Studio', url: 'localhost:7071' },
@@ -15,6 +17,12 @@ function linkGen(): IApiSource[] {
 
 export const state = (): IApiSourceState => {
   const links = linkGen()
+
+  // Probably need to use cookies here for the server-side render, kind of annoying...
+  // const prevSource = localStorage.getItem(sourceKey)
+  // const activeSource = prevSource
+  //   ? (JSON.parse(prevSource) as IApiSource)
+  //   : links[1]
 
   return {
     activeApiSource: links[0],
@@ -34,5 +42,6 @@ export const mutations: MutationTree<IApiSourceState> = {
     source: IApiSource
   ): void {
     STATE.activeApiSource = source
+    localStorage.setItem(sourceKey, JSON.stringify(source))
   }
 }

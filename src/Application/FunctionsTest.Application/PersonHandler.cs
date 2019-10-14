@@ -113,7 +113,7 @@ namespace FunctionsTest.Application
                 GetPersistenceQueueClient();
 
             var person = persistenceClient.
-                GetPerson(command.PersonKey).
+                GetPerson(command.Id).
                 Result;
 
             person.Name = command.Name;
