@@ -132,6 +132,8 @@ namespace FunctionsTest.Application
         public static void Run(
             [QueueTrigger(QueueConstants.Application.Person.DeleteEntity.InputQueue,
                 Connection = ConfigurationConstants.AzureStorageKey)] string myQueueItem,
+            [Queue(QueueConstants.Application.Person.DeleteEntity.InputQueue,
+                Connection = ConfigurationConstants.AzureStorageKey)] out string myQueueResult,
             ILogger log,
             ExecutionContext context)
         {
@@ -141,7 +143,11 @@ namespace FunctionsTest.Application
                 GenerateQueueClient().
                 GetPersistenceQueueClient().
                 DeletePerson(command.PersonKey).
-                ConfigureAwait(false);
+                ConfigureAwait(true).
+                GetAwaiter().
+                GetResult();
+
+            myQueueResult = myQueueItem.ToQueueResponse(new DeletePersonResponse());
         }
     }
 }

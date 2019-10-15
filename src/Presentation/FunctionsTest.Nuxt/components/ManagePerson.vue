@@ -1,16 +1,21 @@
 <template>
   <div>
-    <div v-if="isEdit">
-      <label for="id">Id</label>
-      <input type="text" id="id" name="id" disabled="disabled" :value="id" />
+    <div v-if="isLoading">Loading...</div>
+    <div v-if="!isLoading">
+      <div v-if="isEdit">
+        <label for="id">Id</label>
+        <input type="text" id="id" name="id" disabled="disabled" :value="id" />
+      </div>
+
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" v-model="name" />
+
+      <div v-if="!submitting">
+        <button :disabled="disabled" @click="submit">Submit</button>
+        <button v-if="isEdit" @click="deleteEntity()">Delete</button>
+      </div>
+      <div v-if="submitting">Submitting...</div>
     </div>
-
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" v-model="name" />
-
-    <button :disabled="disabled" @click="submit" v-if="!submitting">Submit</button>
-    <button v-if="isEdit" @click="deleteEntity()">Delete</button>
-    <div v-if="submitting">Submitting...</div>
   </div>
 </template>
 
@@ -25,6 +30,10 @@ const managePerson = namespace(ManagePersonStoreKeys.namespace)
 export default class ManagePerson extends Vue {
   public async mounted() {
     await this.initialize()
+  }
+
+  public destroyed() {
+    this.clear()
   }
 
   public async serverPrefetch() {
@@ -58,6 +67,9 @@ export default class ManagePerson extends Vue {
     this.$router.push('/')
   }
 
+  @managePerson.State(ManagePersonStoreKeys.state.loading)
+  public isLoading: boolean
+
   @managePerson.State(ManagePersonStoreKeys.state.id)
   public id: string
 
@@ -73,6 +85,9 @@ export default class ManagePerson extends Vue {
   @managePerson.Getter(ManagePersonStoreKeys.getters.submitDisabled)
   public disabled: boolean
 
+  @managePerson.Mutation(ManagePersonStoreKeys.mutations.clear)
+  private clear: () => void
+
   @managePerson.Mutation(ManagePersonStoreKeys.mutations.setName)
   private setName: (name: string) => void
 
@@ -83,6 +98,8 @@ export default class ManagePerson extends Vue {
   private initializeById: (id: string) => Promise<void>
 
   @managePerson.Action(ManagePersonStoreKeys.actions.delete)
+  private internalDelete: () => Promise<void>
+
   @Prop()
   private initId: string
 }

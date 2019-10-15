@@ -9,7 +9,9 @@ export const ManagePersonStoreKeys = {
     submitDisabled: 'submitDisabled'
   },
   mutations: {
+    clear: 'CLEAR',
     setId: 'SET_ID',
+    setLoading: 'SET_LOADING',
     setName: 'SET_NAME',
     setPerson: 'SET_PERSON',
     setSubmitting: 'SET_SUBMITTING'
@@ -17,6 +19,7 @@ export const ManagePersonStoreKeys = {
   namespace: 'ManagePersonStore',
   state: {
     id: 'id',
+    loading: 'loading',
     name: 'name',
     submitting: 'submitting'
   }

@@ -37,6 +37,7 @@
                 public static class DeleteEntity
                 {
                     public const string InputQueue = PersonKey + Delete + Input;
+                    public const string OutputQueue = PersonKey + Delete + Output;
                 }
 
                 public static class GetEntity
@@ -76,6 +77,7 @@
                 public static class DeleteEntity
                 {
                     public const string InputQueue = PersonKey + Delete + Input;
+                    public const string OutputQueue = PersonKey + Delete + Output;
                 }
 
                 public static class GetEntity

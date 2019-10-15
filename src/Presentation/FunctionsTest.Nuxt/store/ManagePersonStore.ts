@@ -6,6 +6,7 @@ import { ApiSourceStoreKeys, PersonListStoreKeys, IPerson } from '~/models'
 export const state = (): IManagePersonState => {
   return {
     id: null,
+    loading: false,
     name: '',
     submitting: false
   }
@@ -24,11 +25,25 @@ export const getters: GetterTree<IManagePersonState, {}> = {
 }
 
 export const mutations: MutationTree<IManagePersonState> = {
+  [ManagePersonStoreKeys.mutations.clear](STATE: IManagePersonState): void {
+    STATE.id = null
+    STATE.loading = false
+    STATE.name = ''
+    STATE.submitting = false
+  },
+
   [ManagePersonStoreKeys.mutations.setId](
     STATE: IManagePersonState,
     id: string | null
   ): void {
     STATE.id = id
+  },
+
+  [ManagePersonStoreKeys.mutations.setLoading](
+    STATE: IManagePersonState,
+    loading: boolean
+  ): void {
+    STATE.loading = loading
   },
 
   [ManagePersonStoreKeys.mutations.setName](
@@ -55,10 +70,13 @@ export const mutations: MutationTree<IManagePersonState> = {
 }
 
 export const actions: ActionTree<IManagePersonState, {}> = {
-  async [ManagePersonStoreKeys.actions.initializeById](
-    context: ActionContext<IManagePersonState, {}>,
-    id: string
+  async [ManagePersonStoreKeys.actions.delete](
+    context: ActionContext<IManagePersonState, {}>
   ): Promise<void> {
+    if (!context.state.id) {
+      throw new Error('Invalid delete - not editing')
+    }
+
     const urlBase =
       context.rootGetters[
         ApiSourceStoreKeys.namespace +
@@ -66,7 +84,31 @@ export const actions: ActionTree<IManagePersonState, {}> = {
           ApiSourceStoreKeys.getters.getApiLink
       ]
 
-    const url = urlBase + '/api/Presentation-Person-Get?id=' + id
+    const url = 'http://' + urlBase + '/api/Presentation-Person-Delete'
+
+    const request = { personKey: context.state.id }
+
+    context.commit(ManagePersonStoreKeys.mutations.setSubmitting, true)
+
+    await fetch(url, { method: 'POST', body: JSON.stringify(request) })
+
+    context.commit(ManagePersonStoreKeys.mutations.setSubmitting, false)
+  },
+
+  async [ManagePersonStoreKeys.actions.initializeById](
+    context: ActionContext<IManagePersonState, {}>,
+    id: string
+  ): Promise<void> {
+    context.commit(ManagePersonStoreKeys.mutations.setLoading, true)
+
+    const urlBase =
+      context.rootGetters[
+        ApiSourceStoreKeys.namespace +
+          '/' +
+          ApiSourceStoreKeys.getters.getApiLink
+      ]
+
+    const url = 'http://' + urlBase + '/api/Presentation-Person-Get?id=' + id
 
     const response = await fetch(url)
 
@@ -76,6 +118,8 @@ export const actions: ActionTree<IManagePersonState, {}> = {
       ManagePersonStoreKeys.mutations.setPerson,
       personResponse.person
     )
+
+    context.commit(ManagePersonStoreKeys.mutations.setLoading, false)
   },
 
   async [ManagePersonStoreKeys.actions.submit](
@@ -114,6 +158,10 @@ export const actions: ActionTree<IManagePersonState, {}> = {
 
     await fetch(url, { method: 'POST', body: JSON.stringify(model) })
 
+    /**
+     * Still need to force refresh this, the mounted hook has a isLoading check
+     * This is to ensure we don't wipe-out the SSR benefits on accident
+     */
     context.dispatch(
       PersonListStoreKeys.namespace +
         '/' +

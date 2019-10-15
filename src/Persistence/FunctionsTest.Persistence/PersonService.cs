@@ -112,6 +112,8 @@ namespace PersonService
         public static void Run(
             [QueueTrigger(QueueConstants.Persistence.Person.DeleteEntity.InputQueue,
                 Connection = ConfigurationConstants.AzureStorageKey)] string myQueueItem,
+            [Queue(QueueConstants.Persistence.Person.DeleteEntity.OutputQueue,
+                Connection = ConfigurationConstants.AzureStorageKey)] out string outputQueueItem,
             ILogger log)
         {
             var personCollection = ClientGenerator.GetMongoCollection<Person>();
@@ -119,6 +121,8 @@ namespace PersonService
             var personKey = myQueueItem.GetQueueMessage<string>();
 
             personCollection.DeleteOne(x => x.Id == personKey);
+
+            outputQueueItem = myQueueItem.ToQueueResponse("");
         }
     }
 

@@ -122,6 +122,16 @@ namespace FunctionsTest.Domain.Extensions
             return JsonConvert.DeserializeObject<TResponse>(result.AsString.GetQueueMessage());
         }
 
+        public static async Task AddMessageAndPollVoidAsync<TRequest>(
+            this CloudQueueClient client,
+            TRequest request,
+            string inputQueueName,
+            string ouptputQueueName,
+            int peekCountOverload = 10)
+        {
+            await client.AddMessageAndPollAsync(request, inputQueueName, ouptputQueueName, peekCountOverload);
+        }
+
         public static async Task<TResponse> AddRequestAndPollAsync<TResponse>(
             this CloudQueueClient client,
             string inputQueueName,
@@ -204,11 +214,15 @@ namespace FunctionsTest.Domain.Extensions
             );
         }
 
-        public async Task DeletePerson(Domain.Models.Application.DeletePersonCommand command)
+        public async Task<Domain.Models.Application.DeletePersonResponse> DeletePerson(
+            Domain.Models.Application.DeletePersonCommand command)
         {
-            await Client.AddTypedMessage(
+            return await Client.AddMessageAndPollAsync<
+                Domain.Models.Application.DeletePersonCommand,
+                Domain.Models.Application.DeletePersonResponse>(
                 command,
-                QueueConstants.Application.Person.DeleteEntity.InputQueue);
+                QueueConstants.Application.Person.DeleteEntity.InputQueue,
+                QueueConstants.Application.Person.DeleteEntity.OutputQueue);
         }
     }
 
@@ -272,9 +286,10 @@ namespace FunctionsTest.Domain.Extensions
 
         public async Task DeletePerson(string personKey)
         {
-            await Client.AddTypedMessage<string>(
+            await Client.AddMessageAndPollVoidAsync<string>(
                 personKey,
-                QueueConstants.Persistence.Person.DeleteEntity.InputQueue);
+                QueueConstants.Persistence.Person.DeleteEntity.InputQueue,
+                QueueConstants.Persistence.Person.DeleteEntity.OutputQueue);
         }
     }
 
