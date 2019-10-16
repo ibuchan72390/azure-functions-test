@@ -20,6 +20,12 @@ namespace FunctionsTest.Domain.Extensions
             return JsonConvert.SerializeObject(message).ToQueueMessage(id);
         }
 
+        public static string ToVoidQueueResponse(this string originalMessage)
+        {
+            var returnId = originalMessage.GetQueueMessageId();
+            return returnId + Delimiter + "{}";
+        }
+
         public static string ToQueueResponse(this string originalMessage, string message)
         {
             var returnId = originalMessage.GetQueueMessageId();

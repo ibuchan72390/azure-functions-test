@@ -122,7 +122,7 @@ namespace PersonService
 
             personCollection.DeleteOne(x => x.Id == personKey);
 
-            outputQueueItem = myQueueItem.ToQueueResponse("");
+            outputQueueItem = myQueueItem.ToVoidQueueResponse();
         }
     }
 
