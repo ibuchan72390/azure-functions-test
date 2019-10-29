@@ -1,7 +1,7 @@
 ﻿using FunctionsTest.Domain.Helpers;
 using FunctionsTest.Domain.Models.Constants;
 using FunctionsTest.Domain.Models.Persistence;
-using FunctionsTest.Domain.Extensions;
+using FunctionsTest.AzureQueue.Extensions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;

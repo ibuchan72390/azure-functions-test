@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace FunctionsTest.Domain.Extensions
+namespace FunctionsTest.AzureQueue.Extensions
 {
     /*
      * This piece is reusable for any usage of the Queue Technology

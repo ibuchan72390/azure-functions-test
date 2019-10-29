@@ -5,8 +5,9 @@ using FunctionsTest.Domain.Models.Constants;
 using FunctionsTest.Domain.Models.Persistence;
 using FunctionsTest.Domain.Helpers;
 using FunctionsTest.Domain.Models.Application;
+using FunctionsTest.AzureQueue.Extensions;
 
-namespace FunctionsTest.Application
+namespace FunctionsTest.AzureQueue
 {
     public static class CreatePersonHandler
     {

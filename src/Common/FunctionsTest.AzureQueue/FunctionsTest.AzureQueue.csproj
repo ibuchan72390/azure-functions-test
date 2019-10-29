@@ -6,11 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.1.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\FunctionsTest.AzureQueue\FunctionsTest.AzureQueue.csproj" />
   </ItemGroup>
 
 </Project>
